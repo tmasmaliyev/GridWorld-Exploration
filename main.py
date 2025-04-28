@@ -1,9 +1,11 @@
-from api import APIManager, APIClient
+from api import APIClient
 from src.agent import Agent
-from src.utils import (
+from utils import (
     get_location, 
     get_run_info,
-    make_move
+    make_move,
+    save_q_table,
+    load_q_table
 )
 
 from dotenv import load_dotenv
@@ -32,30 +34,58 @@ def main():
         headers = headers
     )
 
-    # api_manager = APIManager()
-    # api_manager.add_client("gw", client=api_gw)
-    # api_manager.add_client("scr", client=api_scr)
     #endregion
 
     # region Agent Initializer
     agent = Agent()
+    agent.q_table = load_q_table(f'./q_table_{world_id}.pkl')
+    score = 0
+    game_ended = False
     # endregion
 
     # region Game Loop
     for episode in range(1, EPISODES + 1):
-        run_info = get_run_info(
-            client = api_gw
-        )
+        logging.info(f'Episode : {episode}')
 
         state = get_location(
             client = api_gw,
             world_id = world_id
         )
-        score = run_info["runs"][0]["score"]
+
+        # score = float(run_info["runs"][0]["score"])
 
         for step in range(1, STEPS + 1):
+            logging.info(f'Step : {step}')
+
+            run_info = get_run_info(
+                client = api_scr,
+                run_id = os.getenv('RUN_ID')
+            )
+
+            state = get_location(
+                client = api_gw,
+                world_id = world_id
+            )
+
             action = agent.choose_action(state)
-            make_move()
+
+            logging.info(f'Current run info : {run_info}')
+            logging.info(f'Location : x -> {state[0]}, y -> {state[1]}')
+            logging.info(f'Taken action {action}')
+
+            move_info = make_move(
+                client = api_gw,
+                action = action,
+                world_id = world_id
+            )
+
+            if move_info['newState'] is None:
+                game_ended = True
+                break
+
+            new_score = float(move_info['reward'])
+            
+            logging.info(f'Move info {move_info}')
 
             new_state = get_location(
                 client = api_gw,
@@ -63,9 +93,16 @@ def main():
             )
 
             new_run_info = get_run_info(
-                client = api_gw
+                client = api_scr,
+                run_id = os.getenv('RUN_ID')
             )
-            new_score = new_run_info["runs"][0]["score"]
+
+            logging.info(f'Changed run info : {new_run_info}')
+            logging.info(f'Changed Location : x -> {new_state[0]}, y -> {new_state[1]}')
+
+
+            logging.info(f'Old score : {score}')
+            logging.info(f'New score : {new_score}')
 
             reward = new_score - score
             agent.update(state, action, reward, new_state)
@@ -73,6 +110,11 @@ def main():
             state = new_state
             score = new_score
             
+            save_q_table(f'./q_table_{world_id}.pkl', agent.q_table)
+
+        if game_ended:
+            logging.info(f'Game is completed !')
+            break
 
     # endregion
 
