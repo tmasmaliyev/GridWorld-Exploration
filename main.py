@@ -17,7 +17,7 @@ EPISODES : int = 25
 STEPS : int = 1000
 
 def main():
-    world_id = 2
+    world_id = 1
     
     # region API Initializer
     headers = {
@@ -45,9 +45,9 @@ def main():
 
     # region Agent Initializer
     agent = Agent(
-        # epsilon = 0
+        epsilon = 0
     )
-    # agent.q_table = load_q_table(f'./q_table_{world_id}.pkl')
+    agent.q_table = load_q_table(f'./q_table_{world_id}.pkl')
     # endregion
 
     # region Game Loop
@@ -56,7 +56,7 @@ def main():
 
         # region Initialize Game & Get run_id
         score = 0
-        running_score = 0
+        # running_score = 0
         # game_ended = False
 
         # Reset previous world
@@ -120,14 +120,14 @@ def main():
                 # game_ended = True
                 break
 
-            # new_score = float(move_info['reward']) # For World 1
-            new_score = float(move_info['scoreIncrement'])
+            new_score = float(move_info['reward']) # For World 1
+            # new_score = float(move_info['scoreIncrement'])
             # new_score = round(new_score, 3)
 
-            if new_score == 0:
-                new_running_score = running_score + agent.move_penalty
-            else:
-                new_running_score = running_score + new_score
+            # if new_score == 0:
+            #     new_running_score = running_score + agent.move_penalty
+            # else:
+            #     new_running_score = running_score + new_score
             
             logging.info(f'Move info {move_info}')
 
@@ -145,28 +145,30 @@ def main():
             logging.info(f'Changed Location : x -> {new_state[0]}, y -> {new_state[1]}')
 
             # For World 1
-            # logging.info(f'Old score : {score}')
-            # logging.info(f'New score : {new_score}')
+            logging.info(f'Old score : {score}')
+            logging.info(f'New score : {new_score}')
 
             # For world 2
-            logging.info(f'Old running score : {running_score}')
-            logging.info(f'New running score : {new_running_score}')
+            # logging.info(f'Old running score : {running_score}')
+            # logging.info(f'New running score : {new_running_score}')
 
-            # reward = new_score - score # For World 1
-            reward = new_running_score
+            reward = new_score - score # For World 1
+            # reward = new_running_score
             agent.update(state, action, reward, new_state)
 
             state = new_state
-            running_score = new_running_score
-            # score = new_score
+            # running_score = new_running_score
+            score = new_score
 
-            save_q_table(f'./q_table_{world_id}.pkl', agent.q_table)
+            # save_q_table(f'./q_table_{world_id}.pkl', agent.q_table)
 
         # if game_ended:
         #     break
 
         agent.anneal_epsilon(episode)
         agent.anneal_penalty(episode)
+        
+        agent.reset_visited_state()
 
     # endregion
 

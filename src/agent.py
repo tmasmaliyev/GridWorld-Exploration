@@ -114,5 +114,8 @@ class Agent:
         new_q = old_q + self.lr * (reward + self.gamma * next_q - old_q)
 
         self.q_table[(state, action)] = new_q
-
+        self.visited[state] += 1
         # endregion
+    
+    def reset_visited_state(self) -> None:
+        self.visited = defaultdict(lambda: 0)

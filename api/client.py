@@ -1,4 +1,4 @@
-from http import HTTPMethod
+from .http import HTTPMethod
 import requests, os
 
 from requests.adapters import HTTPAdapter, Retry
