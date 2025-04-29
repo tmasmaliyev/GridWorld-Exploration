@@ -35,10 +35,13 @@ class APIClient:
         self.logger = logging.getLogger(self.__class__.__name__)
     
     def _request(self, method : HTTPMethod, endpoint : str, **kwargs) -> Any:
-        url = os.path.join(
-            self.base_url, 
-            endpoint.lstrip('/')
-        )
+        url = self.base_url
+
+        if endpoint.lstrip('/'):
+            url = os.path.join(
+                self.base_url, 
+                endpoint.lstrip('/')
+            )
 
         try:
             response = self.session.request(
