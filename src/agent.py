@@ -8,13 +8,14 @@ class Agent:
     def __init__(
             self, 
             grid_size : Tuple[int, int] = (40, 40),
-            visited_limit : int = 5,
+            # visited_limit : int = 5,
             lr : Union[int, float] = 0.01,
             gamma : Union[int, float] = 0.99,
-            epsilon : Union[int, float] = 0, # 0.35
+            epsilon : Union[int, float] = 0.999, 
+            epsilon_decay_rate : Union[int, float] = 0.9
     ) -> None:
         self.grid_size = grid_size
-        self.visited_limit = visited_limit
+        # self.visited_limit = visited_limit
         self.actions = {
             Action.N : (0, 1) , 
             Action.S : (0, -1), 
@@ -23,14 +24,22 @@ class Agent:
         }
 
         self.q_table = defaultdict(lambda: 0)
-        self.visited = defaultdict(lambda: 0)
+        # self.visited = defaultdict(lambda: 0)
 
         self.lr = lr
         self.gamma = gamma
+
         self.epsilon = epsilon
+        self._epsilon = epsilon
+    
+        self.epsilon_decay_rate = epsilon_decay_rate
+
+    def anneal_epsilon(self, episode : int) -> None:
+        self.epsilon = self._epsilon * (self.epsilon_decay_rate ** episode)
+
 
     def get_q(self, state : Tuple[int, int], action : Action):
-        return self.q_table.get((state, action), float('-inf'))
+        return self.q_table.get((state, action), 0)
     
     def _applicable_actions(self, state : Tuple[int, int]) -> List[Action]:
         actions = []
@@ -39,8 +48,7 @@ class Agent:
         for action, (dx, dy) in self.actions.items():
             new_x = x + dx
             new_y = y + dy
-            if (self.visited[((new_x, new_y), action)] >= self.visited_limit or \
-                new_x < 0 or new_y < 0 or \
+            if (new_x < 0 or new_y < 0 or \
                 new_x >= self.grid_size[0] or new_y >= self.grid_size[1]):
                 continue
             
@@ -78,5 +86,5 @@ class Agent:
         new_q = old_q + self.lr * (reward + self.gamma * next_q - old_q)
 
         self.q_table[(state, action)] = new_q
-        self.visited[(state), action] += 1
+        # self.visited[(state), action] += 1
         # endregion

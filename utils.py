@@ -10,6 +10,7 @@ from typing import (
     Optional, 
     Any
 )
+import os
 import time
 import cloudpickle
 import logging
@@ -33,15 +34,48 @@ def get_run_info(client : APIClient, run_id : Optional[int] = None) -> List[Dict
         endpoint = "/",
         params = {
             "type" : "runs",
-            "teamId" : 1444,
-            "count" : 10
+            "teamId" : os.getenv("TEAM_ID"),
+            "count" : 100
         }
     )['runs']
 
     if run_id is None:
         return run_info
 
-    return [run for run in run_info if run['runId'] == run_id]
+    return [run for run in run_info if int(run['runId']) == run_id]
+
+@freeze()
+def reset_active_world(client : APIClient) -> None:
+    reset_info = client.get(
+        endpoint = "/",
+        params = {
+            "teamId" : os.getenv("TEAM_ID"),
+            "otp" : 5712768807
+        }
+    )
+
+    if reset_info["code"] != "OK":
+        logging.error(f"Reset active world request returned {reset_info['code']}\n"
+                      f"Output : {reset_info}")
+        raise
+
+@freeze()
+def create_world(client : APIClient, world_id : int) -> Dict:
+    world_info = client.post(
+        endpoint = "/",
+        data = {
+            "type" : "enter",
+            "worldId" : world_id,
+            "teamId" : os.getenv("TEAM_ID"),
+        }
+    )
+
+    if world_info["code"] != "OK":
+        logging.error(f"Create new world request returned {world_info['code']}\n"
+                      f"Output : {world_info}")
+        raise
+
+    return world_info
 
 @freeze()
 def get_location(client : APIClient, world_id : int) -> Tuple[int, int]:
@@ -49,7 +83,7 @@ def get_location(client : APIClient, world_id : int) -> Tuple[int, int]:
         endpoint = "/",
         params = {
             "type" : "location",
-            "teamId" : 1444
+            "teamId" : os.getenv("TEAM_ID")
         }
     )
 
@@ -70,13 +104,13 @@ def get_location(client : APIClient, world_id : int) -> Tuple[int, int]:
     return state
 
 @freeze()
-def make_move(client : APIClient, action : Action, world_id : int) -> None:
+def make_move(client : APIClient, action : Action, world_id : int) -> Optional[Dict]:
     move_info = client.post(
         endpoint = "/",
         data = {
             "type" : "move",
             "worldId" : world_id,
-            "teamId" : 1444,
+            "teamId" : os.getenv("TEAM_ID"),
             "move" : action.name
         }
     )
@@ -86,7 +120,6 @@ def make_move(client : APIClient, action : Action, world_id : int) -> None:
                       f"Output : {move_info}")
         raise
     
-    # logging.info(move_info)
 
     return move_info
 
