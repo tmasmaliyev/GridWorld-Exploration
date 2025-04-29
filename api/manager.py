@@ -1,6 +1,5 @@
 from .client import APIClient
 
-from typing import Dict
 import logging
 
 class APIManager:
