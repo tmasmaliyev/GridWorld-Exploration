@@ -17,7 +17,7 @@ EPISODES : int = 25
 STEPS : int = 1000
 
 def main():
-    world_id = 1
+    world_id = 2
     
     # region API Initializer
     headers = {
@@ -44,8 +44,10 @@ def main():
     #endregion
 
     # region Agent Initializer
-    agent = Agent()
-    agent.q_table = load_q_table(f'./q_table_{world_id}.pkl')
+    agent = Agent(
+        epsilon = 0
+    )
+    agent.q_table = load_q_table(f'./q_table_{world_id}_answer.pkl')
     # endregion
 
     # region Game Loop
@@ -54,7 +56,7 @@ def main():
 
         # region Initialize Game & Get run_id
         score = 0
-        game_ended = False
+        # game_ended = False
 
         # Reset previous world
         reset_active_world(
