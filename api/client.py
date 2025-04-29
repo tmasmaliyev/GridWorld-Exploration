@@ -1,5 +1,5 @@
+from http import HTTPMethod
 import requests, os
-from .http import HTTPMethod
 
 from requests.adapters import HTTPAdapter, Retry
 from requests.exceptions import RequestException
