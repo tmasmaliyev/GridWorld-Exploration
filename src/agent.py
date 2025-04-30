@@ -1,4 +1,6 @@
 import random
+import functools
+
 from collections import defaultdict
 
 from .action import Action
@@ -13,7 +15,7 @@ class Agent:
             epsilon : Union[int, float] = 0.999, 
             move_penalty : Union[int, float] = -1.1,
             epsilon_decay_rate : Union[int, float] = 0.95,
-            move_penalty_decay_rate : Union[int, float] = 1.1
+            move_penalty_decay_rate : Union[int, float] = 1.3
     ) -> None:
         self.grid_size = grid_size
 
@@ -26,6 +28,7 @@ class Agent:
 
         self.q_table = defaultdict(lambda: 0)
         self.visited = defaultdict(lambda: 0)
+        self.goal_states = []
 
         self.lr = lr
         self.gamma = gamma
@@ -98,6 +101,10 @@ class Agent:
 
         return available_actions[max_q_value_index]
 
+    @classmethod
+    def manhattan_distance(cls, state1 : Tuple[int, int], state2 : Tuple[int, int]) -> float:
+        return sum(abs(v1 - v2) for v1, v2 in zip(state1, state2)) 
+
     def update(
             self, 
             state : Tuple[int, int], 
@@ -106,7 +113,13 @@ class Agent:
             next_state : Tuple[int, int],
     ) -> None:
         # region Q - Learning -> Model free based (FIX: Adapt for general case)
-        reward = self.move_penalty + self.visited[state]
+        # reward = self.move_penalty + self.visited[state]
+
+        # if self.goal_states:
+        #     distance = Agent.manhattan_distance(state, self.goal_states[0])
+
+        #     reward += 5 / (1 + distance)
+
         best_next_action = self.choose_action(next_state)
 
         old_q = self.get_q(state, action)
