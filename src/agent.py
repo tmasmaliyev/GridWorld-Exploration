@@ -8,11 +8,11 @@ class Agent:
     def __init__(
             self, 
             grid_size : Tuple[int, int] = (40, 40),
-            lr : Union[int, float] = 0.01,
+            lr : Union[int, float] = 0.05,
             gamma : Union[int, float] = 0.99,
             epsilon : Union[int, float] = 0.999, 
-            move_penalty : Union[int, float] = -0.1,
-            epsilon_decay_rate : Union[int, float] = 0.9,
+            move_penalty : Union[int, float] = -1.1,
+            epsilon_decay_rate : Union[int, float] = 0.95,
             move_penalty_decay_rate : Union[int, float] = 1.1
     ) -> None:
         self.grid_size = grid_size
@@ -106,6 +106,7 @@ class Agent:
             next_state : Tuple[int, int],
     ) -> None:
         # region Q - Learning -> Model free based (FIX: Adapt for general case)
+        reward = self.move_penalty + self.visited[state]
         best_next_action = self.choose_action(next_state)
 
         old_q = self.get_q(state, action)

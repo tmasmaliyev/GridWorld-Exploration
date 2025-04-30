@@ -15,7 +15,7 @@ import time
 import cloudpickle
 import logging
 
-def freeze(seconds : Union[int, float] = 0.1):
+def freeze(seconds : Union[int, float] = 0.01):
     def func(f : Callable[..., Any]):
         def wrapper(*args, **kwargs):
             res = f(*args, **kwargs)
