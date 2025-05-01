@@ -14,10 +14,10 @@ from dotenv import load_dotenv
 import logging, os
 
 EPISODES : int = 40
-STEPS : int = 1500
+STEPS : int = 2000
 
 def main():
-    world_id = 2
+    world_id = 3
     
     # region API Initializer
     headers = {
@@ -45,9 +45,10 @@ def main():
 
     # region Agent Initializer
     agent = Agent(
-        epsilon = 0.999 * (0.95 ** 7)
+        epsilon = 0.999,
+        epsilon_decay_rate = 0.999
     )
-    # agent.q_table = load_q_table(f'./q_table_{world_id}.pkl')
+    agent.q_table = load_q_table(f'./q_table_{world_id}.pkl')
     # endregion
 
     # region Game Loop
@@ -116,7 +117,7 @@ def main():
                         f.write(f'You won ! The reward is in x -> {state[0]}, y -> {state[1]}\n')
 
                         agent.q_table[(state, action)] = 10000
-                        agent.goal_states.append(state)
+                        # agent.goal_states.append(state)
 
                 # game_ended = True
                 break
