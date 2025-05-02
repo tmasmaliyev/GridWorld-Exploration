@@ -13,7 +13,7 @@ class Agent:
             lr : Union[int, float] = 0.05,
             gamma : Union[int, float] = 0.99,
             epsilon : Union[int, float] = 0.999, 
-            move_penalty : Union[int, float] = -1.1,
+            move_penalty : Union[int, float] = 1.1,
             epsilon_decay_rate : Union[int, float] = 0.95,
             move_penalty_decay_rate : Union[int, float] = 1.3
     ) -> None:
@@ -64,6 +64,8 @@ class Agent:
             
             actions.append(action)
 
+        # random.shuffle(actions)
+
         return actions
     
     def _explore_based_actions(self, state : Tuple[int, int]) -> List[Action]:
@@ -81,6 +83,8 @@ class Agent:
                 continue
             
             unvisited_actions.append(action)
+
+        # random.shuffle(unvisited_actions)
 
         return unvisited_actions
 
@@ -113,12 +117,12 @@ class Agent:
             next_state : Tuple[int, int],
     ) -> None:
         # region Q - Learning -> Model free based (FIX: Adapt for general case)
-        # reward = self.move_penalty + self.visited[state]
+        reward -= self.visited[state]
 
-        # if self.goal_states:
-        #     distance = Agent.manhattan_distance(state, self.goal_states[0])
+        if self.goal_states:
+            distance = Agent.manhattan_distance(state, self.goal_states[0])
 
-        #     reward += 5 / (1 + distance)
+            reward += 5 / (1 + distance)
 
         best_next_action = self.choose_action(next_state)
 

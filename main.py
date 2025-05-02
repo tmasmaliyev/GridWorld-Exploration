@@ -13,8 +13,8 @@ from utils import (
 from dotenv import load_dotenv
 import logging, os
 
-EPISODES : int = 40
-STEPS : int = 2000
+EPISODES : int = 1000
+STEPS : int = 4500
 
 def main():
     world_id = 3
@@ -45,10 +45,11 @@ def main():
 
     # region Agent Initializer
     agent = Agent(
-        epsilon = 0.999,
+        epsilon = 0.8,
         epsilon_decay_rate = 0.999
     )
-    agent.q_table = load_q_table(f'./q_table_{world_id}.pkl')
+    # agent.q_table = load_q_table(f'./q_table_{world_id}_kinda.pkl')
+    # agent.visited = load_q_table(f'./visited_{world_id}.pkl')
     # endregion
 
     # region Game Loop
@@ -167,6 +168,7 @@ def main():
             score = new_score
 
             save_q_table(f'./q_table_{world_id}.pkl', agent.q_table)
+            save_q_table(f'./visited_{world_id}.pkl', agent.visited)
 
         # if game_ended:
         #     break
@@ -174,7 +176,7 @@ def main():
         agent.anneal_epsilon(episode)
         # agent.anneal_penalty(episode)
         
-        agent.reset_visited_state()
+        # agent.reset_visited_state()
 
     # endregion
 
