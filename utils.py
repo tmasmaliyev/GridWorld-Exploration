@@ -135,3 +135,24 @@ def load_q_table(filepath : str) -> Dict:
         logging.info(f'Loaded q_table successfully !')
 
         return cloudpickle.load(f)
+
+def save_states(filepath : str, states : List[Tuple[int, int]]) -> None:
+    with open(filepath, 'w') as f:
+        for state in states:
+            f.write(f'{state[0]} {state[1]}\n')
+
+def load_states(filepath : str) -> List[Tuple[int, int]]:
+    states = []
+
+    with open(filepath, 'r') as f:
+        for line in f.readlines():
+            line = line.strip()
+
+            if not line:
+                continue
+                
+            states.append(
+                (int(state) for state in line.split())
+            )
+    
+    return states

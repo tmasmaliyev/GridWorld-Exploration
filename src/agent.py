@@ -1,5 +1,4 @@
 import random
-import functools
 
 from collections import defaultdict
 
@@ -26,9 +25,10 @@ class Agent:
             Action.E : (1, 0)
         }
 
-        self.q_table = defaultdict(lambda: 0)
+        self.q_table = defaultdict(lambda: defaultdict(float))
         self.visited = defaultdict(lambda: 0)
         self.goal_states = []
+        self.traps = []
 
         self.lr = lr
         self.gamma = gamma
@@ -49,7 +49,7 @@ class Agent:
         self.move_penalty = self._move_penalty * (self._move_penalty_decay_rate ** episode)
 
     def get_q(self, state : Tuple[int, int], action : Action):
-        return self.q_table.get((state, action), 0)
+        return self.q_table[state][action]
     
     def _applicable_actions(self, state : Tuple[int, int]) -> List[Action]:
         actions = []
@@ -59,12 +59,12 @@ class Agent:
             new_x = x + dx
             new_y = y + dy
             if (new_x < 0 or new_y < 0 or \
-                new_x >= self.grid_size[0] or new_y >= self.grid_size[1]):
+                new_x >= self.grid_size[0] or new_y >= self.grid_size[1] or \
+                (new_x, new_y) in self.traps
+            ):
                 continue
             
             actions.append(action)
-
-        # random.shuffle(actions)
 
         return actions
     
@@ -78,13 +78,12 @@ class Agent:
 
             if (new_x < 0 or new_y < 0 or \
                 new_x >= self.grid_size[0] or new_y >= self.grid_size[1] or \
-                self.visited[(new_x, new_y)] != 0
+                self.visited[(new_x, new_y)] != 0 or \
+                (new_x, new_y) in self.traps
             ):
                 continue
             
-            unvisited_actions.append(action)
-
-        # random.shuffle(unvisited_actions)
+            unvisited_actions.append(action) 
 
         return unvisited_actions
 
@@ -96,7 +95,7 @@ class Agent:
 
             if unvisited_actions:
                 return random.choice(unvisited_actions)
-
+            
             return random.choice(available_actions)
         
         q_values = [self.get_q(state, action) for action in available_actions]
@@ -117,12 +116,7 @@ class Agent:
             next_state : Tuple[int, int],
     ) -> None:
         # region Q - Learning -> Model free based (FIX: Adapt for general case)
-        reward -= self.visited[state]
-
-        if self.goal_states:
-            distance = Agent.manhattan_distance(state, self.goal_states[0])
-
-            reward += 5 / (1 + distance)
+        # reward -= self.visited[state]
 
         best_next_action = self.choose_action(next_state)
 
@@ -131,7 +125,8 @@ class Agent:
 
         new_q = old_q + self.lr * (reward + self.gamma * next_q - old_q)
 
-        self.q_table[(state, action)] = new_q
+        self.q_table[state][action] = new_q
+
         self.visited[state] += 1
         # endregion
     

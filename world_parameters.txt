@@ -1,5 +1,0 @@
-World 2:
-- Learning rate : 0.05 (Reward : 1 / (1 + d))
-
-World 3:
-- 

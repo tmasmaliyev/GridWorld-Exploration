@@ -1,0 +1,36 @@
+You got into trap ! The trap is in x -> 9, y -> 9
+You got into trap ! The trap is in x -> 1, y -> 9
+You got into trap ! The trap is in x -> 0, y -> 10
+You got into trap ! The trap is in x -> 9, y -> 10
+You got into trap ! The trap is in x -> 18, y -> 9
+You got into trap ! The trap is in x -> 10, y -> 27
+You got into trap ! The trap is in x -> 18, y -> 10
+You got into trap ! The trap is in x -> 0, y -> 9
+You got into trap ! The trap is in x -> 0, y -> 18
+You got into trap ! The trap is in x -> 9, y -> 0
+You got into trap ! The trap is in x -> 9, y -> 9
+You got into trap ! The trap is in x -> 9, y -> 1
+You got into trap ! The trap is in x -> 1, y -> 9
+You got into trap ! The trap is in x -> 10, y -> 9
+You got into trap ! The trap is in x -> 10, y -> 0
+You got into trap ! The trap is in x -> 9, y -> 19
+You got into trap ! The trap is in x -> 0, y -> 9
+You got into trap ! The trap is in x -> 0, y -> 27
+You got into trap ! The trap is in x -> 18, y -> 9
+You won ! The reward is in x -> 1, y -> 19
+You got into trap ! The trap is in x -> 19, y -> 9
+You got into trap ! The trap is in x -> 18, y -> 19
+You got into trap ! The trap is in x -> 10, y -> 18
+You got into trap ! The trap is in x -> 1, y -> 27
+You got into trap ! The trap is in x -> 9, y -> 10
+You got into trap ! The trap is in x -> 1, y -> 18
+You got into trap ! The trap is in x -> 0, y -> 10
+You won ! The reward is in x -> 19, y -> 39
+You got into trap ! The trap is in x -> 0, y -> 18
+You got into trap ! The trap is in x -> 9, y -> 37
+You got into trap ! The trap is in x -> 0, y -> 36
+You got into trap ! The trap is in x -> 19, y -> 36
+You got into trap ! The trap is in x -> 19, y -> 18
+You got into trap ! The trap is in x -> 9, y -> 18
+You got into trap ! The trap is in x -> 10, y -> 27
+You got into trap ! The trap is in x -> 18, y -> 1
